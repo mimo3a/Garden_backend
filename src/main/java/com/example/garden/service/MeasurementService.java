@@ -16,6 +16,7 @@ public class MeasurementService {
         this.repo = repo;
     }
 
+    // Добавить измерение
     public Measurement addMeasurement(Long sensorId, double temperature, double humidity) {
         Measurement m = new Measurement();
         m.setSensorId(sensorId);
@@ -25,7 +26,21 @@ public class MeasurementService {
         return repo.save(m);
     }
 
+    // История по сенсору (новые → старые)
     public List<Measurement> getHistory(Long sensorId) {
         return repo.findBySensorIdOrderByTimestampDesc(sensorId);
+    }
+
+    // Вернуть все измерения
+    public List<Measurement> getAll() {
+        return repo.findAll();   // <-- испольуем repo, НЕ measurementRepository
+    }
+
+    // Последнее измерение по сенсору
+    public Measurement getLatest(Long sensorId) {
+        return repo.findBySensorIdOrderByTimestampDesc(sensorId)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }
