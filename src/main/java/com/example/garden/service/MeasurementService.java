@@ -1,7 +1,6 @@
 package com.example.garden.service;
 
 import com.example.garden.model.Measurement;
-import com.example.garden.model.Sensor;
 import com.example.garden.repository.MeasurementRepository;
 import com.example.garden.repository.SensorRepository;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,14 @@ public class MeasurementService {
         this.sensorRepository = sensorRepository;
     }
 
-    public Measurement addMeasurement(Long sensorId, double temperature, double humidity, LocalDateTime timestamp) {
+    public Measurement addMeasurement(Long sensorId,
+                                      double temperature,
+                                      double humidity,
+                                      LocalDateTime timestamp) {
 
-        sensorRepository.findById(sensorId).orElseThrow();
+        // Проверим, что сенсор существует
+        sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new RuntimeException("Sensor not found"));
 
         Measurement m = new Measurement();
         m.setSensorId(sensorId);
@@ -40,12 +44,5 @@ public class MeasurementService {
 
     public List<Measurement> getAll() {
         return measurementRepository.findAll();
-    }
-
-    public Measurement getLatest(Long sensorId) {
-        return measurementRepository.findBySensorIdOrderByTimestampDesc(sensorId)
-                .stream()
-                .findFirst()
-                .orElse(null);
     }
 }

@@ -1,11 +1,16 @@
 package com.example.garden.controller;
 
+import java.time.LocalDateTime;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;    // <<< ВАЖНО!
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.garden.model.Measurement;
 import com.example.garden.service.MeasurementService;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/measurements")
@@ -17,27 +22,25 @@ public class MeasurementController {
         this.measurementService = ms;
     }
 
-    // JSON input
     @PostMapping
-    public Measurement addMeasurement(@RequestBody MeasurementDTO dto) {
+    public Measurement add(
+            @RequestParam Long sensorId,
+            @RequestParam double temperature,
+            @RequestParam double humidity) {
+
         return measurementService.addMeasurement(
-                dto.sensorId(),
-                dto.temperature(),
-                dto.humidity(),
-                dto.timestamp()
+                sensorId,
+                temperature,
+                humidity,
+                LocalDateTime.now()
         );
     }
 
-    @GetMapping("/history/{sensorId}")
-    public List<Measurement> getHistory(@PathVariable Long sensorId) {
-        return measurementService.getHistory(sensorId);
-    }
-
     @GetMapping("/latest/{sensorId}")
-    public Measurement getLatest(@PathVariable Long sensorId) {
-        List<Measurement> h = measurementService.getHistory(sensorId);
-        return h.isEmpty() ? null : h.get(0);
+    public Measurement latest(@PathVariable Long sensorId) {
+        return measurementService.getHistory(sensorId)
+                                 .stream()
+                                 .findFirst()
+                                 .orElse(null);
     }
-
-    public record MeasurementDTO(Long sensorId, double temperature, double humidity, LocalDateTime timestamp) {}
 }
