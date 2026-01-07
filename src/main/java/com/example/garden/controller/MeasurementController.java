@@ -1,7 +1,11 @@
 package com.example.garden.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;    // <<< ВАЖНО!
@@ -43,14 +47,22 @@ public class MeasurementController {
         );
     }
 
+    // GET endpoint that returns all measurements.
+    // This fixes the 405 Method Not Allowed when calling GET /api/measurements.
+    @GetMapping
+    public List<Measurement> all() {
+        return measurementService.getAll();
+    }
+
     // GET endpoint that returns the latest measurement for a given sensor.
     // Path: /api/measurements/latest/{sensorId}
-    // If no measurements exist for the sensor, returns null.
+    // If no measurements exist for the sensor, returns 404 Not Found instead of an empty body.
     @GetMapping("/latest/{sensorId}")
-    public Measurement latest(@PathVariable Long sensorId) {
-        return measurementService.getHistory(sensorId)
-                                 .stream()
-                                 .findFirst()
-                                 .orElse(null);
+    public ResponseEntity<Measurement> latest(@PathVariable Long sensorId) {
+        Optional<Measurement> opt = measurementService.getHistory(sensorId)
+                                                      .stream()
+                                                      .findFirst();
+        return opt.map(ResponseEntity::ok)
+                  .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }
