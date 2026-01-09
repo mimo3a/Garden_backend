@@ -9,10 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;    // <<< ВАЖНО!
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.garden.dto.MeasurementRequest;
 import com.example.garden.model.Measurement;
 import com.example.garden.service.MeasurementService;
 
@@ -34,25 +35,22 @@ public class MeasurementController {
     // Expects request parameters: sensorId (Long), temperature (double), humidity (double).
     // The timestamp is set to now() inside the controller.
     @PostMapping
-    public Measurement add(
-            @RequestParam Long sensorId,
-            @RequestParam double temperature,
-            @RequestParam double humidity) {
-
+    public Measurement add(@RequestBody MeasurementRequest req) {
         return measurementService.addMeasurement(
-                sensorId,
-                temperature,
-                humidity,
-                LocalDateTime.now()
+            req.getSensorId(),
+            req.getTemperature(),
+            req.getHumidity(),
+            req.getTimestamp() != null
+                ? req.getTimestamp()
+                : LocalDateTime.now()
         );
     }
 
-    // GET endpoint that returns all measurements.
-    // This fixes the 405 Method Not Allowed when calling GET /api/measurements.
     @GetMapping
     public List<Measurement> all() {
         return measurementService.getAll();
     }
+
 
     // GET endpoint that returns the latest measurement for a given sensor.
     // Path: /api/measurements/latest/{sensorId}

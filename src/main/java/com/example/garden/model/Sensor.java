@@ -16,4 +16,6 @@ public class Sensor {
 
     private int minHumidity;
     private int maxHumidity;
+    
+    
 }

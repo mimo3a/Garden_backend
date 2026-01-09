@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### ESP32 / Embedded ###
+/espfile/
+/esp32/
+/esp-project/

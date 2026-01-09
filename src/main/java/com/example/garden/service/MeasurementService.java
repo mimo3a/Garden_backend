@@ -20,15 +20,12 @@ public class MeasurementService {
         this.sensorRepository = sensorRepository;
     }
 
-    public Measurement addMeasurement(Long sensorId,
-                                      double temperature,
-                                      double humidity,
-                                      LocalDateTime timestamp) {
-
-        // Проверим, что сенсор существует
-        sensorRepository.findById(sensorId)
-                .orElseThrow(() -> new RuntimeException("Sensor not found"));
-
+    public Measurement addMeasurement(
+            Long sensorId,
+            double temperature,
+            double humidity,
+            LocalDateTime timestamp
+    ) {
         Measurement m = new Measurement();
         m.setSensorId(sensorId);
         m.setTemperature(temperature);
