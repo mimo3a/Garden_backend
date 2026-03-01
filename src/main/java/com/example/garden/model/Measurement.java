@@ -23,5 +23,13 @@ public class Measurement {
 
     private Double value;
 
-    private LocalDateTime timestamp = LocalDateTime.now();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime timestamp;
+
+    @PrePersist
+    protected void onCreate() {
+        this.timestamp = LocalDateTime.now();
+    }
+
+   
 }
