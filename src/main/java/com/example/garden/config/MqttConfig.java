@@ -41,13 +41,11 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound(MqttPahoClientFactory factory) {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(
-                        "garden-backend",
-                        factory,
-                        "smartgarden/+/temperature",
-                        "smartgarden/+/humidity",
-                        "smartgarden/+/soil"
-                );
+        new MqttPahoMessageDrivenChannelAdapter(
+                "garden-backend",
+                factory,
+                "smartgarden/+/data"
+        );
 
         adapter.setQos(1);
         adapter.setOutputChannel(mqttInputChannel());

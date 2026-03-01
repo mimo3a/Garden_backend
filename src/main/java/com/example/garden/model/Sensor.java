@@ -1,21 +1,22 @@
 package com.example.garden.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
 @Entity
+@Getter
+@Setter
 public class Sensor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(unique = true)
+    private Integer deviceId;
+
     private String location;
 
-    private int minHumidity;
-    private int maxHumidity;
-    
-    
+    private String name;
 }
